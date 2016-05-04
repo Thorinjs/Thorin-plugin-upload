@@ -127,6 +127,13 @@ module.exports = function(thorin, opt, pluginName) {
     return false;
   }
 
+  /*
+  * Returns a previously registered storage by its name.
+  * */
+  pluginObj.getStorage = function GetStorage(name) {
+    return storageInstances[name] || null;
+  }
+
   pluginObj.options = opt;
   pluginObj.IStorage = IStorage;
   return pluginObj;
