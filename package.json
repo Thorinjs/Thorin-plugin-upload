@@ -1,0 +1,20 @@
+{
+  "name": "thorin-plugin-upload",
+  "author": "Stiudeo",
+  "version": "1.0.2",
+  "dependencies": {
+    "busboy": "^0.2.13",
+    "route-parser": "0.0.5"
+  },
+  "description": "Thorin.js Uploader",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Stiudeo/Thorin-plugin-upload"
+  },
+  "homepage": "http://thorinjs.com",
+  "bugs": {
+    "url": "https://github.com/Stiudeo/Thorin-plugin-upload/issues"
+  }
+}
