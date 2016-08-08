@@ -1,9 +1,9 @@
 {
   "name": "thorin-plugin-upload",
   "author": "Stiudeo",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "dependencies": {
-    "busboy": "^0.2.13",
+    "busboy": "0.2.13",
     "route-parser": "0.0.5"
   },
   "description": "Thorin.js Uploader",
