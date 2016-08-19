@@ -7,9 +7,9 @@
  *  -
  * */
 const initUploader = require('./lib/uploader'),
-  inidHandler = require('./lib/handler'),
+  initHandler = require('./lib/handler'),
   IStorage = require('./lib/IStorage');
-module.exports = function(thorin, opt, pluginName) {
+module.exports = function (thorin, opt, pluginName) {
   opt = thorin.util.extend({
     logger: pluginName || 'upload',
     transport: 'http',
@@ -33,7 +33,7 @@ module.exports = function(thorin, opt, pluginName) {
 
   /* When the transport layer is ready, we will attach all the uploading paths to it. */
   thorin.on(thorin.EVENT.RUN, 'transport.' + opt.transport, (tObj) => {
-    for(let i=0; i < handlers.length; i++) {
+    for (let i = 0; i < handlers.length; i++) {
       uploader.add(handlers[i]);
     }
     handlers = null;
@@ -41,20 +41,20 @@ module.exports = function(thorin, opt, pluginName) {
   });
 
   /**
-  * Registers a new upload handler that works exactly as a thorin.Action,
+   * Registers a new upload handler that works exactly as a thorin.Action,
    * but with a few other functionalities.
-  * */
+   * */
   pluginObj.addHandler = function AddUploadHandler(name, uploadPath) {
-    if(!Handler) Handler = inidHandler(thorin, opt);
-    if(!handlers) {
+    if (!Handler) Handler = initHandler(thorin, opt);
+    if (!handlers) {
       logger.error('Upload plugin already started, cannot add handler ' + name);
       return false;
     }
-    if(typeof name !== 'string' || !name || typeof uploadPath !== 'string' || !uploadPath) {
+    if (typeof name !== 'string' || !name || typeof uploadPath !== 'string' || !uploadPath) {
       throw new Error('upload.addHandler() requires (name, uploadPath)');
     }
     const handlerObj = new Handler(name, uploadPath);
-    if(isStarted) {
+    if (isStarted) {
       handlers.add(handlerObj);
     } else {
       handlers.push(handlerObj);
@@ -66,26 +66,39 @@ module.exports = function(thorin, opt, pluginName) {
   pluginObj.File = uploader.FileUpload;
 
   /*
-  * Each upload storage sollution will register itself to the upload plugin,
-  * so that they can share references.
-  * */
+   * Each upload storage sollution will register itself to the upload plugin,
+   * so that they can share references.
+   * */
   const storageClasses = {};
   pluginObj.registerStorageClass = function RegisterStorage(type, StorageClass) {
     storageClasses[type] = StorageClass;
-  }
+  };
 
   /*
-  * Creates and caches an instance of a storage class.
-  * Ways of registering a storage:
-  *   registerStorage(type, instanceName, config)
-  *   registerStorage(type, config)
-  *   registerStorage(storageInstanceObj);
-  * */
+   * Creates a new storage class instance, based on a previously registered one.
+   * NOTE: this is not persisted and should be used with dynamic storage types.
+   * */
+  pluginObj.createStorage = function CreateStorageInstance(type, config) {
+    if(typeof storageClasses[type] === 'undefined') {
+      logger.error('createStorage(): storage ' + type + ' is not registered yet.');
+      return null;
+    }
+    let Storage = storageClasses[type];
+    return new Storage(config);
+  };
+
+  /*
+   * Creates and caches an instance of a storage class.
+   * Ways of registering a storage:
+   *   registerStorage(type, instanceName, config)
+   *   registerStorage(type, config)
+   *   registerStorage(storageInstanceObj);
+   * */
   pluginObj.registerStorage = function RegisterStorageInstance(type, _name, config) {
     // registerStorage(instance)
-    if(type instanceof IStorage) {
+    if (type instanceof IStorage) {
       let name = type.name;
-      if(typeof storageInstances[name] !== 'undefined') {
+      if (typeof storageInstances[name] !== 'undefined') {
         logger.error('registerStorage(): storage ' + name + ' is already registered.');
         return false;
       }
@@ -93,14 +106,14 @@ module.exports = function(thorin, opt, pluginName) {
       return true;
     }
     // registerStorage(type, instanceName, config)
-    if(typeof type === 'string' && typeof _name === 'string') {
-      if(typeof storageInstances[_name] !== 'undefined') {
+    if (typeof type === 'string' && typeof _name === 'string') {
+      if (typeof storageInstances[_name] !== 'undefined') {
         logger.error('registerStorage(): storage ' + _name + ' is already registered.');
         return false;
       }
-      if(!config) config = {};
+      if (!config) config = {};
       let SClass = storageClasses[type];
-      if(!SClass) {
+      if (!SClass) {
         logger.error('registerStorage(): storage type ' + type + ' does not exist or is not loaded.');
         return false;
       }
@@ -108,15 +121,15 @@ module.exports = function(thorin, opt, pluginName) {
       return true;
     }
     // registerStorage(type, config)
-    if(typeof type === 'string' && typeof _name === 'object' && _name) {
+    if (typeof type === 'string' && typeof _name === 'object' && _name) {
       config = _name;
       let name = type;
-      if(typeof storageInstances[name] !== 'undefined') {
+      if (typeof storageInstances[name] !== 'undefined') {
         logger.error('registerStorage(): storage ' + name + ' is already registered.');
         return false;
       }
       let SClass = storageClasses[type];
-      if(!SClass) {
+      if (!SClass) {
         logger.error('registerStorage(): storage type ' + type + ' does not exist or is not loaded.');
         return false;
       }
@@ -128,8 +141,8 @@ module.exports = function(thorin, opt, pluginName) {
   }
 
   /*
-  * Returns a previously registered storage by its name.
-  * */
+   * Returns a previously registered storage by its name.
+   * */
   pluginObj.getStorage = function GetStorage(name) {
     return storageInstances[name] || null;
   }
