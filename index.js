@@ -41,6 +41,39 @@ module.exports = function (thorin, opt, pluginName) {
   });
 
   /**
+   * Given a string like 10MB or 2KB or 13.4GB, it will conver the string to the number of bytes
+   *
+   * */
+  pluginObj.toBytes = function (str) {
+    if (typeof str === 'number' && str > 0) return str;
+    if (typeof str === 'string' && str !== '') {
+      str = str.toUpperCase();
+      str = str.replace(/ /g, '');
+      let unit = str.substr(str.length - 2),
+        value = parseFloat(str.substr(0, str.length - 2));
+      if (unit.length !== 2) return 0;
+      let k = 1000,
+        imul = 0;
+      if (unit === 'KB') {
+        imul = k;
+      } else if (unit === 'MB') {
+        imul = Math.pow(k, 2);
+      } else if (unit === 'GB') {
+        imul = Math.pow(k, 3);
+      } else if (unit === 'TB') {
+        imul = Math.pow(k, 4);
+      } else if (unit === 'PB') {
+        imul = Math.pow(k, 5);
+      }
+      if (imul === 0) return value;
+      value = value * imul;
+      if (isNaN(value)) return 0;
+      return value;
+    }
+    return 0;
+  };
+
+  /**
    * Registers a new upload handler that works exactly as a thorin.Action,
    * but with a few other functionalities.
    * */
@@ -79,7 +112,7 @@ module.exports = function (thorin, opt, pluginName) {
    * NOTE: this is not persisted and should be used with dynamic storage types.
    * */
   pluginObj.createStorage = function CreateStorageInstance(type, config) {
-    if(typeof storageClasses[type] === 'undefined') {
+    if (typeof storageClasses[type] === 'undefined') {
       logger.error('createStorage(): storage ' + type + ' is not registered yet.');
       return null;
     }
