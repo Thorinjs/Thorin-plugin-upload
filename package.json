@@ -1,7 +1,7 @@
 {
   "name": "thorin-plugin-upload",
   "author": "UNLOQ Systems LTD",
-  "version": "1.0.9",
+  "version": "1.0.12",
   "dependencies": {
     "busboy": "0.2.13",
     "route-parser": "0.0.5"

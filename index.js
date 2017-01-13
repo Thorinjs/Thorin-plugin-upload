@@ -41,8 +41,21 @@ module.exports = function (thorin, opt, pluginName) {
   });
 
   /**
+   * Given the number of bytes, it will convert to pretty printing (10MB, 12.3KB, etc)
+   * */
+  const SIZES = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  pluginObj.fromBytes = function (bytes, _dm) {
+    if (typeof bytes !== 'number' || bytes === 0) {
+      return 'Empty';
+    }
+    let k = 1000,
+      dm = (typeof _dm === 'number' ? _dm : 2),
+      i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + SIZES[i];
+  };
+
+  /**
    * Given a string like 10MB or 2KB or 13.4GB, it will conver the string to the number of bytes
-   *
    * */
   pluginObj.toBytes = function (str) {
     if (typeof str === 'number' && str > 0) return str;
