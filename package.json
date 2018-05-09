@@ -1,9 +1,9 @@
 {
   "name": "thorin-plugin-upload",
   "author": "UNLOQ Systems LTD",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "dependencies": {
-    "busboy": "0.2.13",
+    "busboy": "0.2.14",
     "route-parser": "0.0.5"
   },
   "description": "Thorin.js Uploader",
