@@ -22,14 +22,13 @@ module.exports = function (thorin, opt, pluginName) {
     }
   }, opt);
   const storageInstances = {};
-  let logger = thorin.logger(opt.logger),
-    uploader = initUploader(thorin, opt, storageInstances),
-    storages = [],
-    Handler = null;
-
   let pluginObj = {},
     isStarted = false,
     handlers = [];
+  let logger = thorin.logger(opt.logger),
+    uploader = initUploader(thorin, opt, storageInstances, pluginObj),
+    storages = [],
+    Handler = null;
 
   /* When the transport layer is ready, we will attach all the uploading paths to it. */
   thorin.on(thorin.EVENT.RUN, 'transport.' + opt.transport, (tObj) => {
