@@ -1,7 +1,7 @@
 {
   "name": "thorin-plugin-upload",
   "author": "UNLOQ Systems LTD",
-  "version": "1.0.21",
+  "version": "2.0.0",
   "dependencies": {
     "busboy": "0.3.1",
     "route-parser": "0.0.5"
@@ -12,6 +12,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Thorinjs/Thorin-plugin-upload"
+  },
+  "engines": {
+    "node": ">= 12.10.x"
   },
   "homepage": "http://thorinjs.com",
   "bugs": {
